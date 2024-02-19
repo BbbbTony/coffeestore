@@ -17,6 +17,8 @@ export interface Coffee {
 function App() {
     let [coffee, setCoffee] = useState<Coffee[]>(coffees);
     let navigate = useNavigate(); //ㅋㅋ 함수포인터
+    let [btnIcon, setBtnIcon] = useState('🔻');
+    let [expands, setExpands] = useState(false);
 
     return (
         <div className="App">
@@ -86,18 +88,26 @@ function App() {
                             <button
                                 className="btn btn-warning"
                                 onClick={() => {
-                                    axios
-                                        .get('https://jamsuham75.github.io/image/coffee.json')
-                                        .then((result) => {
-                                            let coffee2 = [...coffee, ...result.data];
-                                            setCoffee(coffee2);
-                                        })
-                                        .catch(() => {
-                                            console.log('fail');
-                                        });
+                                    {
+                                        expands === false
+                                            ? axios
+                                                  .get('https://jamsuham75.github.io/image/coffee.json')
+                                                  .then((result) => {
+                                                      let coffee2 = [...coffee, ...result.data];
+                                                      setCoffee(coffee2);
+                                                      setExpands(true);
+                                                      setBtnIcon('🔺');
+                                                  })
+                                                  .catch(() => {
+                                                      console.log('fail');
+                                                  })
+                                            : window.location.reload();
+                                        setExpands(true);
+                                        setBtnIcon('🔻');
+                                    }
                                 }}
                             >
-                                🔻
+                                {btnIcon}
                             </button>
                         </div>
                     }
@@ -116,6 +126,7 @@ const CoffeeItem: FC<CoffeeItemProps> = ({ coffee }) => {
     let navigate = useNavigate();
     return (
         <Col
+            className="col-md-4"
             onClick={() => {
                 navigate('/detail/' + coffee.id);
             }}
